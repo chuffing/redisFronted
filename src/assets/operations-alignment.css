@@ -1,0 +1,166 @@
+/*
+ * 运维页面只补充业务组件样式。
+ * 平台布局、颜色、字号、卡片和导航继续以 global.css 为准。
+ */
+.recovery-page {
+  min-height: auto;
+  padding-left: 0;
+}
+
+.sidebar .menu-head {
+  justify-content: flex-start;
+  gap: 11px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: left;
+}
+
+.sidebar .menu-item {
+  justify-content: flex-start;
+  width: auto;
+  min-height: 40px;
+  margin: 0 0 0 17px;
+  padding: 0 12px;
+  border: 0;
+  box-shadow: none;
+  text-align: left;
+}
+
+.recovery-page .container {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.recovery-page .pagehead {
+  gap: 12px;
+  margin: 0 0 14px;
+}
+
+.recovery-page .pagehead h1 {
+  color: #172033;
+  font-size: 25px;
+  letter-spacing: 0;
+}
+
+.recovery-page .headnote {
+  color: #8791a0;
+  font-size: 11px;
+  letter-spacing: .8px;
+}
+
+.recovery-page .card {
+  border: 1px solid #edf0f5;
+  border-radius: 9px;
+  box-shadow: 0 4px 12px rgba(31, 50, 79, .045);
+}
+
+.recovery-page .card h2 {
+  display: flex;
+  align-items: center;
+  min-height: 53px;
+  padding: 0 18px;
+  border-bottom: 1px solid #e9edf4;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.recovery-page .card h2::before {
+  flex: 0 0 auto;
+  width: 3px;
+  height: 16px;
+  margin-right: 9px;
+  background: #1976f3;
+  vertical-align: 0;
+}
+
+.recovery-page .card h2 .card-actions,
+.recovery-page .card h2 .progress-pill,
+.recovery-page .card h2 .right {
+  float: none;
+  margin-left: auto;
+}
+
+.recovery-page .pill {
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.recovery-page .btn {
+  min-height: 34px;
+  border-radius: 5px;
+  padding: 8px 15px;
+  font-size: 13px;
+}
+
+.recovery-page .btn.primary {
+  background: #dd2938;
+  box-shadow: none;
+}
+
+.recovery-page .btn.primary:hover {
+  background: #c91f2e;
+  box-shadow: none;
+}
+
+.recovery-page .field input,
+.recovery-page .field textarea,
+.recovery-page .field select {
+  border-color: #dcdfe6;
+  border-radius: 5px;
+}
+
+.recovery-page .field input:focus,
+.recovery-page .field textarea:focus,
+.recovery-page .field select:focus {
+  border-color: #409eff;
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, .12);
+}
+
+.recovery-page .node,
+.recovery-page .masterrow .node,
+.recovery-page .sentinel {
+  border-radius: 6px;
+  box-shadow: 0 3px 8px rgba(30, 69, 110, .06);
+}
+
+.recovery-page .masterrow .node {
+  border-color: #5b90cb;
+  background: #fff;
+}
+
+.recovery-page .sentinels {
+  border-radius: 8px;
+  background: #f8fbff;
+}
+
+.recovery-page .package-table th,
+.recovery-page .data-table th {
+  color: #727d8d;
+  background: #fafbfc;
+}
+
+.recovery-page .message,
+.recovery-page .alert {
+  border-radius: 5px;
+}
+
+.recovery-page .modal {
+  border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+  .recovery-page .pagehead {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .recovery-page .pagehead .right {
+    width: 100%;
+    margin-left: 0;
+  }
+}
