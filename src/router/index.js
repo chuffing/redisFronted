@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import { resetRequestCancelToken } from '@/api'
+import { getInstances, resetRequestCancelToken } from '@/api'
 import FaultRecoveryPage from '@/fault-recovery/FaultRecoveryPage.vue'
 import VersionUpgradePage from '@/version-upgrade/VersionUpgradePage.vue'
 import ServerSwitchPage from '@/server-switch/ServerSwitchPage.vue'
@@ -23,8 +23,28 @@ const routes = [
 const router = new VueRouter({ routes })
 
 // 路由切换时取消上一页尚未完成的 Axios 请求，避免慢响应回写已销毁页面。
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   resetRequestCancelToken()
+
+  // 首次纳管页面自身直接放行，避免重复判断造成循环跳转。
+  if (to.name === 'TopologyInitialization') {
+    next()
+    return
+  }
+
+  try {
+    const managedInstances = await getInstances(1)
+
+    // 当前不存在已纳管Redis时，统一进入首次纳管页面。
+    if (!managedInstances || managedInstances.length === 0) {
+      next({ name: 'TopologyInitialization', replace: true })
+      return
+    }
+  } catch (error) {
+    // 接口异常不能被误判为尚未纳管，否则平台故障时会错误跳转。
+    console.error('读取平台纳管状态失败：', error)
+  }
+
   next()
 })
 
