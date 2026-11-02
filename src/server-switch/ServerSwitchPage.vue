@@ -2,10 +2,6 @@
   <div class="recovery-page server-switch-page">
     <a class="skip-link" href="#server-switch-main">跳到页面内容</a>
     <main id="server-switch-main" class="container" tabindex="-1">
-      <div class="pagehead">
-        <h1>服务器切换</h1>
-      </div>
-
       <RecoveryTopology
         show-version
         :topology="topology"
@@ -114,7 +110,7 @@
           >{{ submitting ? '正在提交' : '执行服务器切换' }}</button>
 
           <div class="alert switch-alert" :class="{ blocked: submitError || blockedReason }">
-            ⚠ {{ submitError || blockedReason || '新集群启动后将停止旧集群，请确认目标配置正确' }}
+            ⚠ {{ submitError || blockedReason || '目标服务器上的 Redis/Sentinel 启动后将停止原服务器服务，请确认目标配置正确' }}
           </div>
         </div>
       </section>
@@ -172,7 +168,7 @@
           <span id="switch-modal-title">⚠ 确认服务器切换</span>
           <button ref="confirmCloseButton" type="button" class="close" aria-label="关闭" @click="closeSwitchConfirmation">×</button>
         </div>
-        <div class="modalnotice">平台将部署并启动新集群，随后停止当前生产集群。</div>
+        <div class="modalnotice">平台将在目标服务器部署并启动 Redis/Sentinel，随后停止原服务器上的对应服务。</div>
         <dl class="confirm-details">
           <div><dt>目标版本</dt><dd>Redis {{ selectedPackage ? selectedPackage.redisVersion : '--' }}</dd></div>
           <div><dt>目标主节点</dt><dd>{{ masterHostIp }}</dd></div>
@@ -282,7 +278,7 @@ export default {
         { label: '部署版本与配置', start: 2, end: 6 },
         { label: '启动新 Redis', start: 7, end: 8 },
         { label: '启动新 Sentinel', start: 9, end: 9 },
-        { label: '停止旧集群并纳管', start: 10, end: 11 }
+        { label: '停止原节点并纳管新节点', start: 10, end: 11 }
       ]
     }
   },

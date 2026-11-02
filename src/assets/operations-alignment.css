@@ -78,6 +78,7 @@
   vertical-align: 0;
 }
 
+
 .recovery-page .card h2 .card-actions,
 .recovery-page .card h2 .progress-pill,
 .recovery-page .card h2 .right {
@@ -133,6 +134,12 @@
   background: #fff;
 }
 
+/* Master 身份样式只用于正常状态，发生故障时统一使用异常视觉。 */
+.recovery-page .masterrow .node.abnormal {
+  border-color: var(--fault-border);
+  background: linear-gradient(110deg, #fff 0%, var(--fault-bg) 100%);
+}
+
 .recovery-page .sentinels {
   border-radius: 8px;
   background: #f8fbff;
@@ -163,4 +170,92 @@
     width: 100%;
     margin-left: 0;
   }
+}
+
+
+/* 故障恢复：去除卡片标题前的蓝色竖条 */
+.recovery-page .card h2::before {
+  content: none;
+}
+
+/* 故障恢复：优化页面大标题 */
+.recovery-page .pagehead h1 {
+  color: #263445;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+/* 拓扑标题行只保留真实状态、最近切换信息和本卡片的手动刷新。 */
+.recovery-page .topology-actions {
+  margin-left: auto;
+}
+
+.recovery-page .last-switch-time {
+  color: #8791a0;
+  font-weight: 400;
+}
+
+.recovery-page .topology-refresh-button {
+  min-width: 64px;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid #1976f3;
+  border-radius: 5px;
+  color: #1976f3;
+  background: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.recovery-page .topology-refresh-button:hover {
+  background: #f2f7ff;
+}
+
+.recovery-page .topology-refresh-button:disabled {
+  border-color: #b8c8dc;
+  color: #9aa9bc;
+  background: #f7f9fc;
+  cursor: default;
+}
+
+/* 保留主从连接结构，用竖线替代箭头，并拉开六张节点卡片的间距。 */
+.recovery-page .branches {
+  width: min(590px, 66%);
+  height: 44px;
+}
+
+.recovery-page .branches::before {
+  height: 22px;
+}
+
+.recovery-page .branches::after {
+  top: 22px;
+}
+
+.recovery-page .replicas {
+  width: min(820px, 90%);
+}
+
+.recovery-page .replicas::before,
+.recovery-page .replicas::after {
+  content: "";
+  top: -22px;
+  width: 0;
+  height: 22px;
+  border-left: 2px solid #a8b6d0;
+}
+
+.recovery-page .replicas::before {
+  left: 115px;
+}
+
+.recovery-page .replicas::after {
+  right: 115px;
+}
+
+.recovery-page .sentinels {
+  margin-top: 26px;
+  padding: 11px 16px;
+  gap: 24px;
 }

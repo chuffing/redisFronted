@@ -4,8 +4,8 @@
       当前生产拓扑
       <span class="topology-actions">
         <span class="topology-state" :class="topologyStatusClass">{{ topologyStatus }}</span>
-        <span v-if="refreshedAt" class="refresh-time">{{ refreshedAt }}</span>
-        <button type="button" class="text-button" :disabled="loading" @click="$emit('refresh')">
+        <span class="last-switch-time">上次切换：{{ lastSwitchText }}</span>
+        <button type="button" class="topology-refresh-button" :disabled="loading" @click="$emit('refresh')">
           {{ loading ? '刷新中' : '刷新' }}
         </button>
       </span>
@@ -184,6 +184,16 @@ export default {
       if (['健康', '正常'].includes(this.topologyStatus)) return 'success'
       if (['警告', '异常'].includes(this.topologyStatus)) return 'warning'
       return 'neutral'
+    },
+
+    lastSwitchText() {
+      const lastSwitch = this.topology.lastSwitch
+      if (!lastSwitch) return '暂无切换记录'
+
+      const switchTime = lastSwitch.switchTime || lastSwitch.createdTime
+      if (!switchTime) return '暂无切换记录'
+
+      return String(switchTime).replace('T', ' ').slice(0, 19)
     }
   },
 

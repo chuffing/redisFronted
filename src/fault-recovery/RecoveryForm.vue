@@ -3,7 +3,7 @@
     <h2 id="operation-title">恢复操作</h2>
 
     <div class="operation">
-      <div class="field">
+      <div class="field" :class="{ invalid: reasonError }">
         <label for="recovery-reason">操作原因</label>
         <input
           id="recovery-reason"
@@ -12,8 +12,10 @@
           maxlength="200"
           placeholder="请输入操作原因"
           :disabled="submitting"
+          @blur="validateReason"
           @keyup.enter="openConfirmation"
         >
+        <span v-if="reasonError" class="field-error">{{ reasonError }}</span>
       </div>
 
       <div class="field">
@@ -108,6 +110,7 @@ export default {
     return {
       operationReason: '',
       createdBy: getCurrentOperator(),
+      reasonError: '',
       formError: '',
       confirmationVisible: false,
       impactConfirmed: false,
@@ -124,10 +127,15 @@ export default {
   },
 
   methods: {
+    validateReason() {
+      this.reasonError = this.operationReason ? '' : '请输入操作原因'
+      return !this.reasonError
+    },
+
     openConfirmation() {
       this.formError = ''
 
-      if (!this.operationReason) {
+      if (!this.validateReason()) {
         this.formError = '请输入操作原因'
         this.$refs.reasonInput.focus()
         return

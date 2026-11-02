@@ -2,10 +2,6 @@
   <div class="recovery-page version-upgrade-page">
     <a class="skip-link" href="#version-upgrade-main">跳到页面内容</a>
     <main id="version-upgrade-main" class="container" tabindex="-1">
-      <div class="pagehead">
-        <h1>版本升级</h1>
-      </div>
-
       <RecoveryTopology
         show-version
         :topology="topology"
@@ -137,7 +133,7 @@
               >
             </div>
 
-            <div class="field">
+            <div class="field" :class="{ invalid: reasonError }">
               <label for="upgrade-reason">操作原因</label>
               <input
                 id="upgrade-reason"
@@ -146,7 +142,9 @@
                 maxlength="200"
                 :disabled="taskLocked"
                 placeholder="请输入操作原因"
+                @blur="validateReason"
               >
+              <span v-if="reasonError" class="field-error">{{ reasonError }}</span>
             </div>
 
             <div class="field">
@@ -319,6 +317,7 @@ export default {
       packageNotice: '',
       selectedPackageId: '',
       operationReason: '',
+      reasonError: '',
       createdBy: getCurrentOperator(),
       submitting: false,
       submitError: '',
@@ -654,9 +653,14 @@ export default {
       }
     },
 
+    validateReason() {
+      this.reasonError = this.operationReason ? '' : '请输入操作原因'
+      return !this.reasonError
+    },
+
     openUpgradeConfirmation() {
       this.submitError = ''
-      if (!this.operationReason) {
+      if (!this.validateReason()) {
         this.submitError = '请输入操作原因'
         this.$refs.reasonInput.focus()
         return

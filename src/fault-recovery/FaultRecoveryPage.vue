@@ -3,10 +3,6 @@
     <a class="skip-link" href="#recovery-main">跳到页面内容</a>
 
     <main id="recovery-main" class="container" tabindex="-1">
-      <div class="pagehead">
-        <h1>故障恢复</h1>
-      </div>
-
       <RecoveryTopology
         :topology="topology"
         :node-statuses="nodeStatuses"

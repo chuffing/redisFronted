@@ -51,6 +51,22 @@
           <span class="right" style="background:#eaf8ef;color:#20a867;padding:5px 10px;border-radius:4px;font-size:12px;font-weight:500">{{ topologyStatus }}</span>
         </div>
         <div class="topology-box">
+          <svg
+            v-if="topologyReplicas.length"
+            class="dashboard-topology-connectors"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <line x1="50" y1="22" x2="50" y2="50" />
+            <g
+              v-for="(replica, index) in topologyReplicas"
+              :key="replica.instanceId || replica.addr"
+            >
+              <line x1="50" y1="50" :x2="index === 0 ? 22 : 78" y2="50" />
+              <line :x1="index === 0 ? 22 : 78" y1="50" :x2="index === 0 ? 22 : 78" y2="76" />
+            </g>
+          </svg>
           <div v-for="(n, i) in topologyNodes" :key="i" class="topo-node" :class="n.role" :style="n.style">
             <strong>{{ n.name }}</strong>
             <span>{{ n.addr }}</span>
@@ -183,7 +199,8 @@ export default {
   },
   computed: {
     runningCount() { return this.instances.filter(i => i.runStatus === '正常').length },
-    abnormalCount() { return this.instances.filter(i => i.runStatus !== '正常').length }
+    abnormalCount() { return this.instances.filter(i => i.runStatus !== '正常').length },
+    topologyReplicas() { return this.topologyNodes.filter(node => node.role === 'replica') }
   },
   created() {
     // ECharts 实例不要放进 data，避免被 Vue 2 深度观察导致图表异常
