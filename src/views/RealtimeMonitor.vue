@@ -11,7 +11,7 @@
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
         <el-select v-model="selectedInstance" placeholder="选择实例" style="width:340px" @change="onInstanceChange">
           <el-option v-for="i in instances" :key="i.instanceId"
-            :label="i.instanceName + '｜' + i.hostIp + ':' + i.redisPort + '｜' + (i.role ? i.role.toUpperCase() : '')"
+            :label="i.instanceName +  '｜' + (i.role ? i.role.toUpperCase() : '')"
             :value="i.instanceId" />
         </el-select>
         <div style="display:flex;gap:6px;align-items:center;font-size:13px">

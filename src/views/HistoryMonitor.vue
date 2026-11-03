@@ -9,7 +9,7 @@
           <label class="form-label">Redis实例</label>
           <el-select v-model="query.instanceId" placeholder="请选择Redis实例" class="instance-select" @change="onInstanceChange">
             <el-option v-for="i in instances" :key="i.instanceId"
-              :label="i.instanceName + '｜' + i.hostIp + ':' + i.redisPort" :value="i.instanceId" />
+              :label="i.instanceName" :value="i.instanceId" />
           </el-select>
         </div>
         <div class="form-item">

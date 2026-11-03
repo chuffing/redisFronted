@@ -219,6 +219,23 @@
   cursor: default;
 }
 
+/* 当前配置仅提供线下查看位置，不占用拓扑和运维操作的主要视觉层级。 */
+.recovery-page .config-location-note {
+  margin: 0;
+  padding: 9px 23px;
+  border-bottom: 1px solid #edf2f8;
+  color: #7b8798;
+  background: #fbfcfe;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.recovery-page .config-location-note code {
+  color: #405a7c;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: inherit;
+}
+
 /* 保留主从连接结构，用竖线替代箭头，并拉开六张节点卡片的间距。 */
 .recovery-page .branches {
   width: min(590px, 66%);

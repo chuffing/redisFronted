@@ -22,7 +22,7 @@
         <div class="stat-icon green">◷</div>
         <div>
           <div class="stat-label">平均延迟</div>
-          <div class="stat-value">{{ metricData.latency || '--' }}<small style="font-size:14px"> ms</small></div>
+          <div class="stat-value">{{ metricData.latency || '--' }}<small style="font-size:14px"> μs</small></div>
           <span class="stat-tiny">较上一采集周期 <i :class="metricData.latencyChange<=0?'down':'up'">{{ metricData.latencyChange<=0?'↓':'↑' }} {{ Math.abs(metricData.latencyChange||0).toFixed(1) }}%</i></span>
         </div>
       </div>

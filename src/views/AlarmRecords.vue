@@ -46,6 +46,8 @@
           <el-option label="延迟" value="avgLatency" />
           <el-option label="网络入带宽" value="netInputBandwidth" />
           <el-option label="网络出带宽" value="netOutputBandwidth" />
+          <el-option label="主从复制延迟" value="replDelay" />
+          <el-option label="连通性延迟" value="pingLatency" />
         </el-select>
         <el-select v-model="query.recoverStatus" placeholder="处理状态" clearable style="width:140px">
           <el-option label="未恢复" :value="0" />

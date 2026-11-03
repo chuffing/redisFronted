@@ -11,6 +11,12 @@
       </span>
     </h2>
 
+    <p class="config-location-note">
+      配置文件位置：平台部署目录下的
+      <code>data/nodeConfigs/current/{节点IP}/</code>
+      （包含 redis.conf 和 sentinel.conf）
+    </p>
+
     <div v-if="loading && !hasNodes" class="topology topology-placeholder" role="status">
       <span class="loading-ring" aria-hidden="true"></span>
       <strong>正在读取生产拓扑</strong>

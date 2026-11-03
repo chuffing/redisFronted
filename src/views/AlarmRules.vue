@@ -147,18 +147,12 @@
       <el-form :model="form" label-width="110px" size="small">
         <el-form-item label="规则名称"><el-input v-model="form.ruleName" /></el-form-item>
         <el-form-item label="监控指标">
-          <el-select v-model="form.metricKey" style="width:100%">
-            <el-option label="CPU使用率" value="cpuUsage" />
-            <el-option label="服务器内存使用率" value="serverMemUsage" />
-            <el-option label="Redis内存使用量" value="redisMemUsed" />
-            <el-option label="QPS" value="qps" />
-            <el-option label="平均延迟" value="avgLatency" />
-            <el-option label="网络输入带宽" value="netInputBandwidth" />
-            <el-option label="网络输出带宽" value="netOutputBandwidth" />
-            <el-option label="节点存活状态" value="nodeRunStatus" />
-            <el-option label="哨兵状态" value="sentinelStatus" />
-            <el-option label="主从复制延迟" value="replDelay" />
-            <el-option label="连通性延迟" value="pingLatency" />
+          <el-select v-model="form.metricKey" style="width:100%" @change="onMetricChange">
+            <el-option
+              v-for="m in metricOptions"
+              :key="m.value"
+              :label="m.label + '（' + m.unit + '）'"
+              :value="m.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="比较方式">
@@ -168,12 +162,18 @@
           </el-select>
         </el-form-item>
         <el-form-item label="告警阈值"><el-input v-model="form.threshold" /></el-form-item>
-        <el-form-item label="阈值单位"><el-input v-model="form.unit" /></el-form-item>
+        <el-form-item label="阈值单位">
+          <el-select v-model="form.unit" placeholder="请选择单位" style="width:100%">
+            <el-option v-for="u in unitOptions" :key="u" :label="u" :value="u" />
+          </el-select>
+          <div class="form-tip">单位由监控指标决定，保存时后端会按指标枚举校正</div>
+        </el-form-item>
         <el-form-item label="持续周期数"><el-input v-model.number="form.duration" /></el-form-item>
         <el-form-item label="告警级别">
           <el-radio-group v-model="form.alarmLevel">
             <el-radio :label="1">提示</el-radio><el-radio :label="2">警告</el-radio><el-radio :label="3">严重</el-radio>
           </el-radio-group>
+          <div class="form-tip">同一指标在同一生效范围可配置提示/警告/严重三级阈值，同级别只能有一条；级别越高阈值需越严格</div>
         </el-form-item>
         <el-form-item label="静默期(s)"><el-input v-model.number="form.silenceDuration" /></el-form-item>
         <el-form-item label="生效范围">
@@ -203,6 +203,30 @@ import * as api from '@/api'
 import { alarmLevelText, formatDateTime } from '@/utils/format'
 import { getCurrentOperator } from '@/utils/currentUser'
 
+// 与后端 MetricTypeEnum.RULE_METRICS 保持一致：
+// 节点存活 / 哨兵状态属于系统状态事件，由平台直接生成系统告警，不开放阈值规则
+const METRIC_OPTIONS = [
+  { value: 'cpuUsage', label: 'CPU使用率', unit: '%' },
+  { value: 'serverMemUsage', label: '服务器内存使用率', unit: '%' },
+  { value: 'redisMemUsed', label: 'Redis内存使用量', unit: 'GB' },
+  { value: 'qps', label: 'QPS', unit: '次/秒' },
+  { value: 'avgLatency', label: '平均延迟', unit: 'μs' },
+  { value: 'netInputBandwidth', label: '网络输入带宽', unit: 'KB/s' },
+  { value: 'netOutputBandwidth', label: '网络输出带宽', unit: 'KB/s' },
+  { value: 'replDelay', label: '主从复制延迟', unit: 's' },
+  { value: 'pingLatency', label: '连通性延迟', unit: 'ms' }
+]
+// 阈值单位下拉枚举，与后端 CommonConstant.UNIT_TYPES 一致
+const UNIT_OPTIONS = ['%', 'GB', '次/秒', 'ms', 's', 'KB/s', 'μs']
+const METRIC_NAME_MAP = METRIC_OPTIONS.reduce((map, item) => {
+  map[item.value] = item.label
+  return map
+}, {})
+const METRIC_UNIT_MAP = METRIC_OPTIONS.reduce((map, item) => {
+  map[item.value] = item.unit
+  return map
+}, {})
+
 export default {
   name: 'AlarmRules',
   data() {
@@ -220,20 +244,11 @@ export default {
       saving: false,
       loading: false,
       instances: [],
-      // 必须与后端 CommonConstant.METRIC_NAMES 完全一致，修改接口会按枚举校验 metricName
-      metricNameMap: {
-        cpuUsage: 'CPU使用率',
-        serverMemUsage: '服务器内存使用率',
-        redisMemUsed: 'Redis内存使用量',
-        qps: 'QPS',
-        avgLatency: '平均延迟',
-        netInputBandwidth: '网络输入带宽',
-        netOutputBandwidth: '网络输出带宽',
-        nodeRunStatus: '节点存活状态',
-        sentinelStatus: '哨兵状态',
-        replDelay: '主从复制延迟',
-        pingLatency: '连通性延迟'
-      },
+      // 必须与后端 CommonConstant.RULE_METRIC_KEYS / METRIC_NAMES 完全一致
+      metricOptions: METRIC_OPTIONS,
+      unitOptions: UNIT_OPTIONS,
+      metricNameMap: METRIC_NAME_MAP,
+      metricUnitMap: METRIC_UNIT_MAP,
       form: this.emptyForm()
     }
   },
@@ -392,6 +407,10 @@ export default {
       this.form = this.emptyForm()
       this.showAdd = true
     },
+    // 监控指标变更时，单位自动切换为该指标在后端枚举中的单位
+    onMetricChange(metricKey) {
+      this.form.unit = this.metricUnitMap[metricKey] || ''
+    },
     editRule(row) {
       this.editId = row.ruleId
       this.form = {
@@ -400,7 +419,7 @@ export default {
         metricKey: row.metricKey,
         compareType: row.compareType,
         threshold: row.threshold,
-        unit: row.unit,
+        unit: this.metricUnitMap[row.metricKey] || row.unit || '',
         duration: row.duration ? Number(row.duration) : 1,
         collectInterval: row.collectInterval ? Number(row.collectInterval) : 300,
         alarmLevel: Number(row.alarmLevel) || 2,
@@ -420,6 +439,7 @@ export default {
         this.$message.warning('请填写有效的告警阈值')
         return
       }
+      if (!this.form.unit) { this.$message.warning('请选择阈值单位'); return }
       if (this.form.scopeType === 2 && !(this.form.scopeInstanceIds || []).length) {
         this.$message.warning('请选择生效节点')
         return
@@ -429,7 +449,7 @@ export default {
         const data = {
           ruleName: String(this.form.ruleName).trim(),
           metricKey: this.form.metricKey,
-          // 修改接口要求 metricName 为合法枚举值；新增接口会按 metricKey 覆盖
+          // metricName / unit 最终以指标枚举为准，后端会重新派生
           metricName: this.metricNameMap[this.form.metricKey] || this.form.metricKey,
           compareType: this.form.compareType,
           threshold,
@@ -488,6 +508,7 @@ export default {
 
 <style scoped>
 .more-link { color: #2784ed; font-size: 12px; cursor: pointer; }
+.form-tip { margin-top: 4px; color: #909399; font-size: 12px; line-height: 1.4; }
 .alert-list {
   border: 1px solid #ebeef5;
   border-radius: 7px;
